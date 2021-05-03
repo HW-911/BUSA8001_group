@@ -1,0 +1,41 @@
+year=['YearBuilt','YearRemodAdd','GarageYrBlt','YrSold','MoSold']
+# YearBuilt -> subtract from 2021, find house age
+'''
+YearBuilt: Original construction date
+
+YearRemodAdd: Remodel date (same as construction date if no remodeling or additions)
+
+--> house age & T/F (1/0) remodel --> new feature
+--> drop original feature
+'''
+property_age=[]
+remodel=[]  # 1 True / 0 False
+garage_age=[] # have NAN field
+sold_period=[] # in months
+
+train5 = train.copy()
+from datetime import date
+
+
+today = date.today()      # print("Today's date:", today)
+d2 = int(today.strftime("%Y"))  # 2021
+m2 = int(today.strftime("%m"))
+
+for val, remo, gara in zip(train5['YearBuilt'],train5['YearRemodAdd'],train5['GarageYrBlt']): #drop these col
+    if val == remo:
+        remodel.append(0)
+    else:
+        remodel.append(1)
+    property_age.append(d2-val)
+    garage_age.append(d2-gara)
+    
+
+for so_mon, so_year in zip(train5['MoSold'],train5['YrSold']):
+    sold_months=(d2-so_year)*12 + (so_mon)
+    sold_period.append(sold_months)
+    
+train5["property_age"]=property_age
+train5["property_remodel"]=remodel
+train5["garage_age"]=garage_age
+train5["months_sold"]=sold_months
+print(train5.columns)
